@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+
+//NECESSARY
 apply plugin: 'realm-android'
 
 
@@ -11,6 +13,11 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        //NECESSARY
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
     buildTypes {
         release {

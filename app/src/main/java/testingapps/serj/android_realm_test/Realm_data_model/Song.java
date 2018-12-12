@@ -1,9 +1,10 @@
 package testingapps.serj.android_realm_test.Realm_data_model;
 
 import io.realm.RealmList;
+import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class Song extends RealmList {
+public class Song extends RealmObject {
 
     @PrimaryKey
     private long id;
