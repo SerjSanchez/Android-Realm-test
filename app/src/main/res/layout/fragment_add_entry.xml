@@ -1,14 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AddEntryFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <EditText
+        android:layout_alignParentTop="true"
+        android:id="@+id/artist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="50dp"
+        android:hint="Artist"/>
+    <EditText
+        android:id="@+id/album"
+        android:layout_below="@id/artist"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Album"/>
+    <EditText
+        android:id="@+id/song"
+        android:layout_below="@+id/album"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Song"/>
 
-</FrameLayout>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/song"
+        android:text="Add"
+        android:layout_centerHorizontal="true"
+        android:textSize="30sp"
+        android:id="@+id/add"
+        />
+
+</RelativeLayout>
