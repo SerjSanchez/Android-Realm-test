@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import io.realm.Realm;
 import io.realm.RealmConfiguration;
+import io.realm.exceptions.RealmMigrationNeededException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -18,8 +19,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         Realm.init(getApplicationContext());
+        RealmConfiguration config = new RealmConfiguration.Builder().deleteRealmIfMigrationNeeded().build();
+
+        Realm.setDefaultConfiguration(config);
         realm = Realm.getDefaultInstance();
-        RealmConfiguration config = new RealmConfiguration.Builder().build();
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
         OperationsPagerAdapter myPagerAdapter = new OperationsPagerAdapter(getSupportFragmentManager());

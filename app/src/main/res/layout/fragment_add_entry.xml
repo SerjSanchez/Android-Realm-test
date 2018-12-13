@@ -9,19 +9,22 @@
         android:id="@+id/artist"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Artist"/>
+        android:hint="Artist"
+        android:inputType="text" />
     <EditText
         android:id="@+id/album"
         android:layout_below="@id/artist"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Album"/>
+        android:hint="Album"
+        android:inputType="text" />
     <EditText
         android:id="@+id/song"
         android:layout_below="@+id/album"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Song"/>
+        android:hint="Song"
+        android:inputType="text" />
 
     <Button
         android:layout_width="wrap_content"
