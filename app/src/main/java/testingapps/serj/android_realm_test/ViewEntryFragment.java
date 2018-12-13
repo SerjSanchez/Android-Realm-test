@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Objects;
+
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
@@ -68,7 +70,7 @@ public class ViewEntryFragment extends Fragment {
                     try {
                         artists = realm.where(Artist.class).equalTo("id", 1).findAll();
 
-                        getActivity().runOnUiThread(() -> {
+                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
 
                             artistsTV.setText(artists.get(0).getName());
 
