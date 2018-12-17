@@ -16,6 +16,7 @@ import android.widget.EditText;
 
 import io.realm.Realm;
 import testingapps.serj.android_realm_test.Realm_data_model.Album;
+import testingapps.serj.android_realm_test.Realm_data_model.AllData;
 import testingapps.serj.android_realm_test.Realm_data_model.Artist;
 import testingapps.serj.android_realm_test.Realm_data_model.Song;
 
@@ -147,10 +148,20 @@ public class AddEntryFragment extends Fragment {
                     Number maxIdNumAlbum = realm.where(Album.class).max("id");
                     Number maxIdNumSong = realm.where(Song.class).max("id");
 
+                    AllData database = realm.where(AllData.class).findFirst();
+
+                    if(database == null){
+                        //if there is no "allData", create it otherwise, just save everything under that object.
+                        //there should only exist one instance of alldata in the database since its only
+                        //purpose is to contain the full database
+                        database = realm.createObject(AllData.class,1);
+                    }
+
+                    //Find all artists to check if it's already in the database
                     Artist artist = realm.where(Artist.class).contains("name",artistStr).findFirst();
 
                     if(artist == null) {
-                        //if the doesnt exist, create new one
+                        //if the artist doesnt exist, create new one
 
                         //Create objects like this because ID is a primary key. Primary keays MUST be
                         // added at the time of object creation
@@ -167,6 +178,10 @@ public class AddEntryFragment extends Fragment {
                         //Add parameters to artist ("album" is a parameter from Artist)
                         artist.setName(artistStr);
                         artist.addAlbum(album);
+
+                        //since the artist is new, add it to the database
+                        database.addArtist(artist);
+
                     } else {
                         // if the artist exists, add the parameters
 

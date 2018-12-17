@@ -1,5 +1,7 @@
 package testingapps.serj.android_realm_test.Realm_data_model;
 
+import com.google.gson.annotations.Expose;
+
 import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
@@ -8,12 +10,15 @@ import io.realm.annotations.Required;
 
 public class Artist extends RealmObject {
 
+    @Expose
     @PrimaryKey
     private long id;
 
+    @Expose
     @Required
     private String name;
 
+    @Expose
     private RealmList<Album> albums;
 
     //Getters and setters

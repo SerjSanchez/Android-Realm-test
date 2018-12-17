@@ -11,12 +11,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
 import java.util.Objects;
 
 import io.realm.Realm;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.annotations.LinkingObjects;
 import testingapps.serj.android_realm_test.Realm_data_model.Album;
+import testingapps.serj.android_realm_test.Realm_data_model.AllData;
 import testingapps.serj.android_realm_test.Realm_data_model.Artist;
 import testingapps.serj.android_realm_test.Realm_data_model.Song;
 
@@ -28,6 +35,8 @@ public class ViewEntryFragment extends Fragment {
     TextView artistsTV;
     TextView albumsTV;
     TextView songsTV;
+
+    TextView jsonExampleTV;
 
     RealmResults<Artist> artists;
     private RealmList<Album> albums;
@@ -41,6 +50,21 @@ public class ViewEntryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view =  inflater.inflate(R.layout.fragment_view_entry, container, false);
 
+        try(Realm realm = Realm.getDefaultInstance()){
+            realm.executeTransaction((Realm realm1) -> {
+                try {
+                    //Load this data when creating the database
+                    Gson gson = new GsonBuilder().create();
+                    AllData data = gson.fromJson("{\"artists\":[{\"albums\":[{\"id\":1,\"name\":\"black album\",\"songs\":[{\"id\":1,\"name\":\"unforgiven\"},{\"id\":2,\"name\":\"nothing else matters\"}]}],\"id\":1,\"name\":\"metallica\"},{\"albums\":[{\"id\":2,\"name\":\"white album\",\"songs\":[{\"id\":3,\"name\":\"blackbird\"}]},{\"id\":3,\"name\":\"let it be\",\"songs\":[{\"id\":4,\"name\":\"octopuss garden\"}]}],\"id\":2,\"name\":\"the beatles\"}],\"id\":1}",AllData.class);
+
+                    realm1.copyToRealmOrUpdate(data);
+
+                }catch (Exception e){
+                    Log.e(TAG, e.getMessage());
+                }
+
+            });
+        }
 
         mSwipeRefreshLayout = view.findViewById(R.id.swipeToRefresh);
 
@@ -64,43 +88,67 @@ public class ViewEntryFragment extends Fragment {
     private void loadData() {
 
         try(Realm realm = Realm.getDefaultInstance()){
-            realm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(@NonNull Realm realm) {
-                    try {
-                        artists = realm.where(Artist.class).equalTo("id", 1).findAll();
+            realm.executeTransaction((Realm realm1) -> {
+                try {
 
-                        Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
+                    artists = realm1.where(Artist.class).equalTo("id", 1).findAll();
 
-                            artistsTV.setText(artists.get(0).getName());
+                    final AllData data = realm1.where(AllData.class).equalTo("id",1).findFirst();
 
-                            albums = artists.get(0).getAlbums();
 
-                            String albumsStr = "";
-                            String songsStr = "";
 
-                            for (Album album : albums ){
+                    Objects.requireNonNull(getActivity()).runOnUiThread(() -> {
 
-                                albumsStr = albumsStr.concat(album.getName() +System.getProperty("line.separator"));
-                                songs = album.getSongs();
+                        artistsTV.setText(artists.get(0).getName());
 
-                                for(Song song : songs){
-                                    songsStr = songsStr.concat(song.getName() +System.getProperty("line.separator"));
+                        albums = artists.get(0).getAlbums();
 
-                                }
-                                songsStr = songsStr.concat(System.getProperty("line.separator"));
+                        String albumsStr = "";
+                        String songsStr = "";
 
+                        for (Album album : albums ){
+
+                            albumsStr = albumsStr.concat(album.getName() +System.getProperty("line.separator"));
+                            songs = album.getSongs();
+
+                            for(Song song : songs){
+                                songsStr = songsStr.concat(song.getName() +System.getProperty("line.separator"));
+                            }
+                            songsStr = songsStr.concat(System.getProperty("line.separator"));
+
+                        }
+
+                        albumsTV.setText(albumsStr);
+                        songsTV.setText(songsStr);
+
+                        //Initialize GSON parser
+                        Gson gson = new GsonBuilder().setExclusionStrategies(new ExclusionStrategy() {
+                            @Override
+                            public boolean shouldSkipField(FieldAttributes f) {
+                                return false;
                             }
 
-                            albumsTV.setText(albumsStr);
-                            songsTV.setText(songsStr);
+                            @Override
+                            public boolean shouldSkipClass(Class<?> clazz) {
+                                return false;
+                            }
+                        }).excludeFieldsWithoutExposeAnnotation().create();
 
-                        });
-                    }catch (Exception e){
-                        Log.e(TAG, e.getMessage());
-                    }
+                        if(data !=null && data.getArtists().size()>0) {
+                            //Gson to string
+                            //NEEDED TO COPY FROM REALM
+                            String jsonInString = gson.toJson(realm1.copyFromRealm(data));
 
+                            //Show Json string
+                           jsonExampleTV.setText(jsonInString);
+                            //jsonExampleTV.setText(data.getArtists().get(0).getName());
+                        }
+
+                    });
+                }catch (Exception e){
+                    Log.e(TAG, e.getMessage());
                 }
+
             });
         }
 
@@ -112,6 +160,7 @@ public class ViewEntryFragment extends Fragment {
         artistsTV = view.findViewById(R.id.artist);
         albumsTV = view.findViewById(R.id.albums);
         songsTV = view.findViewById(R.id.songs);
+        jsonExampleTV = view.findViewById(R.id.json_example);
 
     }
 
