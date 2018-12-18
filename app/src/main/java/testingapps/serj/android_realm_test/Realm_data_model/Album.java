@@ -11,7 +11,7 @@ import io.realm.annotations.Required;
 
 public class Album extends RealmObject {
 
-    @Expose
+    @Expose (deserialize = false)
     @PrimaryKey
     private long id;
 

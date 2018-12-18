@@ -54,8 +54,11 @@ public class ViewEntryFragment extends Fragment {
             realm.executeTransaction((Realm realm1) -> {
                 try {
                     //Load this data when creating the database
+
+                    //reset to test if changes are working correctly
+                    //realm1.deleteAll();
                     Gson gson = new GsonBuilder().create();
-                    AllData data = gson.fromJson("{\"artists\":[{\"albums\":[{\"id\":1,\"name\":\"black album\",\"songs\":[{\"id\":1,\"name\":\"unforgiven\"},{\"id\":2,\"name\":\"nothing else matters\"}]}],\"id\":1,\"name\":\"metallica\"},{\"albums\":[{\"id\":2,\"name\":\"white album\",\"songs\":[{\"id\":3,\"name\":\"blackbird\"}]},{\"id\":3,\"name\":\"let it be\",\"songs\":[{\"id\":4,\"name\":\"octopuss garden\"}]}],\"id\":2,\"name\":\"the beatles\"}],\"id\":1}",AllData.class);
+                    AllData data = gson.fromJson("{\"artists\":[{\"albums\":[{\"id\":1,\"name\":\"black album\",\"songs\":[{\"id\":1,\"name\":\"unforgiven\"},{\"id\":2,\"name\":\"nothing else matters\"}]}],\"name\":\"metallica\"},{\"albums\":[{\"id\":2,\"name\":\"white album\",\"songs\":[{\"id\":3,\"name\":\"blackbird\"}]},{\"id\":3,\"name\":\"let it be\",\"songs\":[{\"id\":4,\"name\":\"octopuss garden\"}]}],\"id\":2,\"name\":\"the beatles\"}],\"id\":1}",AllData.class);
 
                     realm1.copyToRealmOrUpdate(data);
 
@@ -91,7 +94,7 @@ public class ViewEntryFragment extends Fragment {
             realm.executeTransaction((Realm realm1) -> {
                 try {
 
-                    artists = realm1.where(Artist.class).equalTo("id", 1).findAll();
+                    artists = realm1.where(Artist.class).findAll();
 
                     final AllData data = realm1.where(AllData.class).equalTo("id",1).findFirst();
 
